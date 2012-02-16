@@ -1,5 +1,8 @@
 package player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import enemy.Enemy;
 
 public class Player{
@@ -25,18 +28,26 @@ public class Player{
 	private PlayerClass playerClass;
 	private final String className;
 	
+	private List<Spell> spellList;
+	
 	public static final int HEALTH_PER_STAMINA = 10;
 	public static final int MANA_PER_INT = 15;
 	
 	public void setCurrentHealth(int currentHealth){ this.currentHealth = currentHealth; }
 	public int getCurrentHealth(){ return currentHealth; }
+	public int getCurrentMana(){ return currentMana; }
+	public List<Spell> getSpells(){ return spellList; }
 	public String getName(){ return name; }
 	
 	private static enum PlayerClass{
-		MAGE("Mage", 		12, 8, 14, 16, 7, 1, 5, 2),
-		WARRIOR("Warrior", 	18, 8, 14, 0, 1, 6, 4, 4),
-		ROGUE("Rogue", 		10, 16, 14, 10, 2, 2, 4, 7),
-		MEDIC("Medic", 		8, 8, 16, 18, 7, 1, 6, 1);
+		MAGE("Mage", 		12, 8, 14, 16, 7, 1, 5, 2,
+				new ConcreteSpell("Fireball", 100, 10, false)),
+		WARRIOR("Warrior", 	18, 8, 14, 0, 1, 6, 4, 4, 
+				(new ConcreteSpell("Smash", 100, 2, false))),
+		ROGUE("Rogue", 		10, 16, 14, 10, 2, 2, 4, 7, 
+				new ConcreteSpell("Assault", 110, 4, false)),
+		MEDIC("Medic", 		8, 8, 16, 18, 7, 1, 6, 1,
+				new ConcreteSpell("Heal", 80, 15, true));
 		
 		private String className;
 		
@@ -50,9 +61,11 @@ public class Player{
 		private int bonusStamina;
 		private int bonusIntellect;
 		
+		private List<Spell> classSpells;
+		
 		private PlayerClass(String name, int strength, int agility, int stamina,
 				int intellect, int bonusInt, int bonusStr, int bonusStam,
-				int bonusAgi){
+				int bonusAgi, Spell startingSpell){
 			this.strength = strength;
 			this.agility = agility;
 			this.stamina = stamina;
@@ -61,6 +74,8 @@ public class Player{
 			this.bonusStrength = bonusStr;
 			this.bonusAgility = bonusAgi;
 			this.bonusStamina = bonusStam;
+			this.classSpells = new ArrayList<Spell>();
+			classSpells.add(startingSpell);
 		}
 		
 		public int getStrength(){ return strength; }
@@ -68,6 +83,8 @@ public class Player{
 		public int getAgility(){ return agility; }
 		public int getIntellect(){ return intellect; }
 		public String getClassName(){ return className; }
+		
+		public List<Spell> getClassSpells(){ return classSpells; }
 
 		public int getBonusStam() { return bonusStamina; }
 		public int getBonusStr() { return bonusStrength; }
@@ -82,6 +99,7 @@ public class Player{
 		this.stamina = this.playerClass.getStamina();
 		this.intellect = this.playerClass.getIntellect();
 		this.agility = this.playerClass.getAgility();
+		this.spellList = this.playerClass.getClassSpells();
 		this.name = name;
 		this.level = 1;
 		
@@ -98,7 +116,7 @@ public class Player{
 	public static Player createNewRogue(String name){
 		return new Player(PlayerClass.ROGUE, name);
 	}
-	public static Player createNewMedic(string name){
+	public static Player createNewMedic(String name){
 		return new Player(PlayerClass.MEDIC, name);
 	}
 	
@@ -145,7 +163,7 @@ public class Player{
 	}
 	
 	public void attack(Enemy e){
-		int variance = ((int) Math.random()) - 5;
+		int variance = ((int) (Math.random() * 10)) - 5;
 		int attackDamage = (strength * 2) + (agility * 2);
 		attackDamage += variance;
 		e.setCurrentHealth(e.getCurrentHealth() - attackDamage);
@@ -187,6 +205,17 @@ public class Player{
 		sb.append(currentXP);
 		sb.append("/");
 		sb.append(xpToLevel);
+		return sb.toString();
+	}
+	
+	public String viewSpells(){
+		StringBuilder sb = new StringBuilder();
+		for(int i = 0; i < spellList.size(); ++i){
+			sb.append(i + 1);
+			sb.append(". ");
+			sb.append(spellList.get(i));
+			sb.append("\n");
+		}
 		return sb.toString();
 	}
 	

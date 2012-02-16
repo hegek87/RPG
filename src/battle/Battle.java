@@ -36,6 +36,17 @@ public class Battle {
 					playerCharacter.attack(enemy);
 					break;
 				case 2:
+					System.out.println(playerCharacter.getCurrentMana());
+					System.out.print(playerCharacter.viewSpells());
+					int returnNum = playerCharacter.getSpells().size() + 1;
+					System.out.print(returnNum);
+					System.out.println(". Return");
+					int choice = Integer.valueOf(PLAYER_INPUT.nextLine());
+					if(choice != returnNum){
+						playerCharacter.castSpell(enemy, 
+								playerCharacter.getSpells().get(choice - 1));
+					}
+					break;
 				case 3:
 				case 4:
 					if(playerCharacter.run()){ 
@@ -69,7 +80,7 @@ public class Battle {
 	
 	public static void main(String[] args){
 		Player pl = Player.createNewWarrior("Sunde");
-		Enemy e1 = new Enemy("vulture", 15, 10, 8, 12);
+		Enemy e1 = new Enemy("vulture", 15, 10, 8, 12, 100, 100);
 		Battle b = new Battle(pl, e1);
 		b.startBattle();
 	}

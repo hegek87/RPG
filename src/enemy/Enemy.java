@@ -17,15 +17,20 @@ public class Enemy {
 	
 	private int currentMana;
 	private int maxMana;
+	private int xpReward;
+	private int goldReward;
 	
 	public Enemy(String name, int strength, int intellect,
-			int stamina, int agility){
+			int stamina, int agility, int xpReward, int goldReward){
 		this.name = name;
 		this.strength = strength;
 		this.agility = agility;
 		this.stamina = stamina;
 		this.intellect = intellect;
 		this.level = 1;
+		
+		this.xpReward = xpReward;
+		this.goldReward = goldReward;
 		
 		this.maxHealth = this.currentHealth = stamina * 10;
 		this.maxMana = this.currentMana = intellect * 15;
@@ -69,11 +74,10 @@ public class Enemy {
 	public int getCurrentHealth() { return currentHealth; }
 
 	public int getGoldReward() {
-		return 0;
+		return goldReward;
 	}
 
 	public int getXpAward() {
-		// TODO Auto-generated method stub
-		return 0;
+		return xpReward;
 	}
 }
