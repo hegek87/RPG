@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 import enemy.Enemy;
 import player.Player;
+import player.Spell;
 
 public class Battle {
 	public static final Scanner PLAYER_INPUT = new Scanner(System.in);
@@ -15,47 +16,70 @@ public class Battle {
 		this.enemy = enemy;
 	}
 	
-	public String displayMenu(){
+	public void displayMenu(){
 		StringBuilder sb = new StringBuilder();
 		sb.append("1. Attack\t");
 		sb.append("2. Cast spell\n");
 		sb.append("3. Use item\t");
 		sb.append("4. Run\n");
-		return sb.toString();
+		System.out.print(sb.toString());
+		int choice = Integer.valueOf(PLAYER_INPUT.nextLine());
+		switch(choice){
+			case 1:
+				playerCharacter.attack(enemy);
+				break;
+			case 2:
+				spellCast();
+				break;
+			case 3:
+				useItem();
+				break;
+			case 4:
+				run();
+				break;
+			default:
+		}
 	}
 	
+	private void run() {
+		if(playerCharacter.run()){
+			System.out.println("You have escaped!");
+			System.exit(0);
+		}
+		return;
+	}
+
+	private void useItem() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void spellCast(){
+		System.out.println(playerCharacter.getCurrentMana());
+		System.out.print(playerCharacter.viewSpells());
+		int returnNum = playerCharacter.getSpells().size() + 1;
+		System.out.print(returnNum);
+		System.out.println(". Return");
+		int choice = Integer.valueOf(PLAYER_INPUT.nextLine());
+		if(choice != returnNum){
+			Spell sp = playerCharacter.getSpells().get(choice - 1);
+			if(playerCharacter.getCurrentMana() >= sp.getManaCost()){
+				playerCharacter.castSpell(enemy, sp);
+			}
+		}
+		else{
+			displayMenu();
+		}
+	}
+	
+
 	public void startBattle(){
 		while((playerCharacter.getCurrentHealth() > 0) &&
 				(enemy.getCurrentHealth() > 0)){
 			System.out.println(playerCharacter);
 			System.out.println(enemy);
-			System.out.print(displayMenu());
-			int input = Integer.valueOf(PLAYER_INPUT.nextLine());
-			switch(input){
-				case 1:
-					playerCharacter.attack(enemy);
-					break;
-				case 2:
-					System.out.println(playerCharacter.getCurrentMana());
-					System.out.print(playerCharacter.viewSpells());
-					int returnNum = playerCharacter.getSpells().size() + 1;
-					System.out.print(returnNum);
-					System.out.println(". Return");
-					int choice = Integer.valueOf(PLAYER_INPUT.nextLine());
-					if(choice != returnNum){
-						playerCharacter.castSpell(enemy, 
-								playerCharacter.getSpells().get(choice - 1));
-					}
-					break;
-				case 3:
-				case 4:
-					if(playerCharacter.run()){ 
-						System.out.println("You have escaped");
-						return;
-					}
-					else{ break; }
-				default:
-			}
+			displayMenu();
+			
 			enemy.attack(playerCharacter);
 		}
 		if(playerCharacter.getCurrentHealth() <= 0){
