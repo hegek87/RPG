@@ -30,6 +30,8 @@ public class Player{
 	
 	private List<Spell> spellList;
 	
+	private InventorySlot [] inventory;
+	
 	public static final int HEALTH_PER_STAMINA = 10;
 	public static final int MANA_PER_INT = 15;
 	
@@ -102,6 +104,8 @@ public class Player{
 		this.spellList = this.playerClass.getClassSpells();
 		this.name = name;
 		this.level = 1;
+		
+		inventory = new InventorySlot[10];
 		
 		this.currentHealth = this.maxHealth = this.stamina * HEALTH_PER_STAMINA;
 		this.currentMana = this.maxMana = this.intellect * MANA_PER_INT;
@@ -176,6 +180,17 @@ public class Player{
 		e.setCurrentHealth(spellDamage);
 	}
 	
+	public void useItem(Useable it, Enemy e){
+		int amount = it.getAmount();
+		if(it.isHeal()){
+			this.currentHealth += amount;
+			this.currentHealth = (this.currentHealth > this.maxHealth) ? 
+					this.maxHealth : this.currentHealth;
+			return;
+		}
+		e.setCurrentHealth(e.getCurrentHealth() - amount);
+	}
+	
 	public boolean run(){
 		double chance = Math.random();
 		if(chance > .8){
@@ -215,6 +230,20 @@ public class Player{
 			sb.append(". ");
 			sb.append(spellList.get(i));
 			sb.append("\n");
+		}
+		return sb.toString();
+	}
+	
+	public String viewInventory(){
+		StringBuilder sb = new StringBuilder();
+		for(int i = 0, j = 0; i < inventory.length; ++i){
+			if(inventory[i].isEmpty()){
+				continue;
+			}
+			sb.append(j + 1);
+			sb.append(". ");
+			sb.append(inventory[i].toString());
+			++j;
 		}
 		return sb.toString();
 	}
