@@ -5,6 +5,7 @@ import java.util.Scanner;
 import enemy.Enemy;
 import player.Player;
 import player.Spell;
+import player.Useable;
 
 public class Battle {
 	public static final Scanner PLAYER_INPUT = new Scanner(System.in);
@@ -50,8 +51,22 @@ public class Battle {
 	}
 
 	private void useItem() {
-		// TODO Auto-generated method stub
-		
+		String [] inventory = playerCharacter.viewInventory();
+		System.out.print(inventory[0]);
+		int returnNum = Integer.valueOf(inventory[1]) + 1;
+		System.out.print(returnNum);
+		System.out.println(". Return");
+		int choice = Integer.valueOf(PLAYER_INPUT.nextLine());
+		if(choice != returnNum){
+			int start = inventory[0].indexOf(choice);
+			int end = inventory[0].indexOf(choice + 1);
+			String itemChoice = inventory[0].substring(start, end - start);
+			Useable item = playerCharacter.getInventory().get(itemChoice);
+			playerCharacter.useItem(item, enemy);
+		}
+		else{
+			displayMenu();
+		}
 	}
 
 	private void spellCast(){

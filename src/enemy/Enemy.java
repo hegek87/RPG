@@ -47,10 +47,12 @@ public class Enemy {
 	public int getIntellect(){ return intellect; }
 	
 	public void attack(Player p){
-		int variance = ((int) Math.random() * 10) - 5;
+		int variance = ((int) (Math.random() * 10)) - 5;
 		int attackDamage = (strength * 2) + (agility * 2);
 		attackDamage += variance;
 		p.setCurrentHealth(p.getCurrentHealth() - attackDamage);
+		System.out.println(name + " hit " + p.getName() + " for "
+				+ attackDamage + " damage.");
 	}
 	
 	public void useSpell(Player p, Spell s){
@@ -72,12 +74,7 @@ public class Enemy {
 	}
 
 	public int getCurrentHealth() { return currentHealth; }
-
-	public int getGoldReward() {
-		return goldReward;
-	}
-
-	public int getXpAward() {
-		return xpReward;
-	}
+	public String getName(){ return name; }
+	public int getGoldReward() { return goldReward; }
+	public int getXpAward() { return xpReward; }
 }

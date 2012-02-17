@@ -30,7 +30,7 @@ public class Player{
 	
 	private List<Spell> spellList;
 	
-	private InventorySlot [] inventory;
+	private Inventory inventory;
 	
 	public static final int HEALTH_PER_STAMINA = 10;
 	public static final int MANA_PER_INT = 15;
@@ -40,6 +40,7 @@ public class Player{
 	public int getCurrentMana(){ return currentMana; }
 	public List<Spell> getSpells(){ return spellList; }
 	public String getName(){ return name; }
+	public Inventory getInventory(){ return inventory; }
 	
 	private static enum PlayerClass{
 		MAGE("Mage", 		12, 8, 14, 16, 7, 1, 5, 2,
@@ -105,7 +106,7 @@ public class Player{
 		this.name = name;
 		this.level = 1;
 		
-		inventory = new InventorySlot[10];
+		inventory = new Inventory(10);
 		
 		this.currentHealth = this.maxHealth = this.stamina * HEALTH_PER_STAMINA;
 		this.currentMana = this.maxMana = this.intellect * MANA_PER_INT;
@@ -171,6 +172,8 @@ public class Player{
 		int attackDamage = (strength * 2) + (agility * 2);
 		attackDamage += variance;
 		e.setCurrentHealth(e.getCurrentHealth() - attackDamage);
+		System.out.println(name + " hit " + e.getName() + 
+				" for " + attackDamage + " damage.");
 	}
 	
 	public void castSpell(Enemy e, Spell s){
@@ -234,18 +237,23 @@ public class Player{
 		return sb.toString();
 	}
 	
-	public String viewInventory(){
+	public String[] viewInventory(){
 		StringBuilder sb = new StringBuilder();
-		for(int i = 0, j = 0; i < inventory.length; ++i){
-			if(inventory[i].isEmpty()){
+		int j = 0;
+		for(int i = 0; i < inventory.size(); ++i){
+			if(inventory.get(i).isEmpty()){
 				continue;
 			}
 			sb.append(j + 1);
 			sb.append(". ");
-			sb.append(inventory[i].toString());
+			sb.append(inventory.get(i).toString());
+			sb.append("\n");
 			++j;
 		}
-		return sb.toString();
+		String[] info = new String[2];
+		info[0] = sb.toString();
+		info[1] = String.valueOf(j);
+		return info;
 	}
 	
 	public static void main(String[] args){
