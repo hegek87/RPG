@@ -5,7 +5,7 @@ import player.Spell;
 
 /** 
  * Enemy
- * @author Kenny
+ * @author hegek87
  * 
  * Generic Enemy class that the player character will fight throughout the game
  */
