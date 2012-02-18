@@ -5,9 +5,13 @@ import java.util.List;
 
 import enemy.Enemy;
 
+/*
+ * The class controlled by the user throughout the game
+ */
 public class Player{
 	private String name;
 	
+	//Stats
 	private int strength;
 	private int agility;
 	private int stamina;
@@ -35,13 +39,23 @@ public class Player{
 	public static final int HEALTH_PER_STAMINA = 10;
 	public static final int MANA_PER_INT = 15;
 	
-	public void setCurrentHealth(int currentHealth){ this.currentHealth = currentHealth; }
+	//getters
+	public void setCurrentHealth(int currentHealth){ this.currentHealth = 
+			currentHealth; }
 	public int getCurrentHealth(){ return currentHealth; }
 	public int getCurrentMana(){ return currentMana; }
 	public List<Spell> getSpells(){ return spellList; }
 	public String getName(){ return name; }
 	public Inventory getInventory(){ return inventory; }
 	
+	/**
+	 * 
+	 * @author Hegek87
+	 * 
+	 * Handles the class base stats and class type. This is used to initialize
+	 * a character in the private constructor
+	 *
+	 */
 	private static enum PlayerClass{
 		MAGE("Mage", 		12, 8, 14, 16, 7, 1, 5, 2,
 				new ConcreteSpell("Fireball", 100, 10, false)),
@@ -54,16 +68,19 @@ public class Player{
 		
 		private String className;
 		
+		//Base stats
 		private int strength; 
 		private int agility;
 		private int stamina;
 		private int intellect;
 		
+		//Stat gains per level
 		private int bonusStrength;
 		private int bonusAgility;
 		private int bonusStamina;
 		private int bonusIntellect;
 		
+		//Initial spells
 		private List<Spell> classSpells;
 		
 		private PlayerClass(String name, int strength, int agility, int stamina,
@@ -81,6 +98,7 @@ public class Player{
 			classSpells.add(startingSpell);
 		}
 		
+		//getters
 		public int getStrength(){ return strength; }
 		public int getStamina(){ return stamina; }
 		public int getAgility(){ return agility; }
@@ -95,6 +113,10 @@ public class Player{
 		public int getBonusAgi() { return bonusAgility; }
 	}
 	
+	/*
+	 * Constructor - private, players should be instantiated through the static
+	 * methods below.
+	 */
 	private Player(PlayerClass playerClass, String name){
 		this.playerClass = playerClass;
 		this.className = this.playerClass.getClassName();
@@ -112,6 +134,7 @@ public class Player{
 		this.currentMana = this.maxMana = this.intellect * MANA_PER_INT;
 	}
 	
+	//Static constructors
 	public static Player createNewWarrior(String name){
 		return new Player(PlayerClass.WARRIOR, name);
 	}
@@ -125,11 +148,15 @@ public class Player{
 		return new Player(PlayerClass.MEDIC, name);
 	}
 	
-
+	//Adds to the players gold
 	public void goldGained(int goldEarned) {
 		this.gold += goldEarned;
 	}
 	
+	/*
+	 * Allows exp to be added upon victory in combat. Also handles when the 
+	 * player levels.
+	 */
 	public void expGained(int earnedXP){
 		while(earnedXP > 0){
 			if((earnedXP + currentXP) >= xpToLevel){
@@ -144,6 +171,10 @@ public class Player{
 		}
 	}
 	
+	/*
+	 * Called upon reaching the next level. Increases the stats of the player
+	 * and sets the exp for the next level.
+	 */
 	private void levelUp(){
 		level++;
 		currentXP = 0;
@@ -157,6 +188,7 @@ public class Player{
 		this.xpToLevel = xpNext;
 	}
 	
+	//Updates the players stats - used when a player levels up
 	private void updateStats(){
 		double percent = (double) currentHealth / maxHealth;
 		this.maxHealth = stamina * HEALTH_PER_STAMINA;
@@ -167,6 +199,9 @@ public class Player{
 		this.currentMana = (int) (maxHealth * percent);
 	}
 	
+	/*
+	 * Attacks some enemy and adds some randomness into the attack damage
+	 */
 	public void attack(Enemy e){
 		int variance = ((int) (Math.random() * 10)) - 5;
 		int attackDamage = (strength * 2) + (agility * 2);
@@ -176,6 +211,9 @@ public class Player{
 				" for " + attackDamage + " damage.");
 	}
 	
+	/*
+	 * Allows spells to be cast at an Enemy.
+	 */
 	public void castSpell(Enemy e, Spell s){
 		this.currentMana -= s.getManaCost();
 		int spellDamage = s.getDamage();
@@ -183,6 +221,10 @@ public class Player{
 		e.setCurrentHealth(spellDamage);
 	}
 	
+	/*
+	 * Uses an item. Also handles whether the item is a heal, or a damaging
+	 * item. 
+	 */
 	public void useItem(Useable it, Enemy e){
 		int amount = it.getAmount();
 		if(it.isHeal()){
@@ -194,6 +236,7 @@ public class Player{
 		e.setCurrentHealth(e.getCurrentHealth() - amount);
 	}
 	
+	//Allows the player to attempt to run from combat.
 	public boolean run(){
 		double chance = Math.random();
 		if(chance > .8){
@@ -204,6 +247,11 @@ public class Player{
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 * String representation of the player
+	 */
 	@Override public String toString(){
 		StringBuilder sb = new StringBuilder();
 		sb.append(this.name);
@@ -215,6 +263,10 @@ public class Player{
 		return sb.toString();
 	}
 	
+	/*
+	 * Simply method which returns a string representing the players current
+	 * progress in its level
+	 */
 	private String displayXP(){
 		StringBuilder sb = new StringBuilder();
 		sb.append("Level: ");
@@ -226,6 +278,10 @@ public class Player{
 		return sb.toString();
 	}
 	
+	/*
+	 * Returns a string representing the list of all available spells the 
+	 * player has.
+	 */
 	public String viewSpells(){
 		StringBuilder sb = new StringBuilder();
 		for(int i = 0; i < spellList.size(); ++i){
@@ -237,6 +293,10 @@ public class Player{
 		return sb.toString();
 	}
 	
+	/*
+	 * Allows the inventory to be viewed. Returns the inventory contents
+	 * as well as the number of non empy inventory slots
+	 */
 	public String[] viewInventory(){
 		StringBuilder sb = new StringBuilder();
 		int j = 0;
