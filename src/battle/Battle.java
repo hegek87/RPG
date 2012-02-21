@@ -7,6 +7,11 @@ import player.Player;
 import player.Spell;
 import player.Useable;
 
+
+/*
+ * Battle system for the RPG. Used everytime a random battle occurs while
+ * exploring the world.
+ */
 public class Battle {
 	public static final Scanner PLAYER_INPUT = new Scanner(System.in);
 	Player playerCharacter;
@@ -17,6 +22,10 @@ public class Battle {
 		this.enemy = enemy;
 	}
 	
+	/*
+	 * Builds and displays the menu choices the player may make. Also handles
+	 * the players choice by making the correct method calls based on input.
+	 */
 	public void displayMenu(){
 		StringBuilder sb = new StringBuilder();
 		sb.append("1. Attack\t");
@@ -42,6 +51,7 @@ public class Battle {
 		}
 	}
 	
+	//Player attempts to run, if successful the battle is terminated
 	private void run() {
 		if(playerCharacter.run()){
 			System.out.println("You have escaped!");
@@ -49,18 +59,19 @@ public class Battle {
 		}
 		return;
 	}
-
+	
+	//Display player items in inventory and allows item usage.
 	private void useItem() {
 		String [] inventory = playerCharacter.viewInventory();
-		System.out.print(inventory[0]);
 		int returnNum = Integer.valueOf(inventory[1]) + 1;
-		System.out.print(returnNum);
-		System.out.println(". Return");
+		inventory[0] = inventory[0] + returnNum + ". Return\n";
+		System.out.print(inventory[0]);
 		int choice = Integer.valueOf(PLAYER_INPUT.nextLine());
 		if(choice != returnNum){
-			int start = inventory[0].indexOf(choice);
-			int end = inventory[0].indexOf(choice + 1);
-			String itemChoice = inventory[0].substring(start, end - start);
+			int start = inventory[0].indexOf(String.valueOf(choice));
+			int end = inventory[0].indexOf(String.valueOf(choice + 1));
+			String itemChoice = inventory[0].substring((start + 3), end - (start + 2));
+			itemChoice = itemChoice.trim();
 			Useable item = playerCharacter.getInventory().get(itemChoice);
 			playerCharacter.useItem(item, enemy);
 		}
@@ -68,7 +79,11 @@ public class Battle {
 			displayMenu();
 		}
 	}
-
+	
+	/*
+	 * Allows the player to view spells they have and cast one if they would
+	 * like
+	 */
 	private void spellCast(){
 		System.out.println(playerCharacter.getCurrentMana());
 		System.out.print(playerCharacter.viewSpells());
@@ -88,6 +103,10 @@ public class Battle {
 	}
 	
 
+	/*
+	 * Starts the main battle loop and makes calls to allow the player to 
+	 * attack. Continues until player wins/loses.
+	 */
 	public void startBattle(){
 		while((playerCharacter.getCurrentHealth() > 0) &&
 				(enemy.getCurrentHealth() > 0)){
@@ -106,6 +125,10 @@ public class Battle {
 		}
 	}
 	
+	/*
+	 * Display screen if the player wins the battle. Displays any gold/exp 
+	 * rewards
+	 */
 	public void victory(){
 		int gold = enemy.getGoldReward();
 		int xpAward = enemy.getXpAward();

@@ -58,13 +58,17 @@ public class Player{
 	 */
 	private static enum PlayerClass{
 		MAGE("Mage", 		12, 8, 14, 16, 7, 1, 5, 2,
-				new ConcreteSpell("Fireball", 100, 10, false)),
+				new ConcreteSpell("Fireball", 100, 10, false),
+				new Potion("Fire potion", false, 50)),
 		WARRIOR("Warrior", 	18, 8, 14, 0, 1, 6, 4, 4, 
-				(new ConcreteSpell("Smash", 100, 2, false))),
+				new ConcreteSpell("Smash", 100, 2, false),
+				new Potion("Minor Health Potion", true, 60)),
 		ROGUE("Rogue", 		10, 16, 14, 10, 2, 2, 4, 7, 
-				new ConcreteSpell("Assault", 110, 4, false)),
+				new ConcreteSpell("Assault", 110, 4, false),
+				new Potion("Minor Health Potion", true, 60)),
 		MEDIC("Medic", 		8, 8, 16, 18, 7, 1, 6, 1,
-				new ConcreteSpell("Heal", 80, 15, true));
+				new ConcreteSpell("Heal", 80, 15, true),
+				new Potion("Ice Potion", false, 60));
 		
 		private String className;
 		
@@ -82,10 +86,10 @@ public class Player{
 		
 		//Initial spells
 		private List<Spell> classSpells;
-		
+		private Inventory inventory;		
 		private PlayerClass(String name, int strength, int agility, int stamina,
 				int intellect, int bonusInt, int bonusStr, int bonusStam,
-				int bonusAgi, Spell startingSpell){
+				int bonusAgi, Spell startingSpell, Useable item){
 			this.strength = strength;
 			this.agility = agility;
 			this.stamina = stamina;
@@ -95,7 +99,9 @@ public class Player{
 			this.bonusAgility = bonusAgi;
 			this.bonusStamina = bonusStam;
 			this.classSpells = new ArrayList<Spell>();
-			classSpells.add(startingSpell);
+			this.classSpells.add(startingSpell);
+			this.inventory = new Inventory(10);
+			this.inventory.add(item);
 		}
 		
 		//getters
@@ -105,7 +111,8 @@ public class Player{
 		public int getIntellect(){ return intellect; }
 		public String getClassName(){ return className; }
 		
-		public List<Spell> getClassSpells(){ return classSpells; }
+		public List<Spell> getClassSpells(){ return this.classSpells; }
+		public Inventory getInventory(){ return this.inventory; }
 
 		public int getBonusStam() { return bonusStamina; }
 		public int getBonusStr() { return bonusStrength; }
@@ -125,10 +132,9 @@ public class Player{
 		this.intellect = this.playerClass.getIntellect();
 		this.agility = this.playerClass.getAgility();
 		this.spellList = this.playerClass.getClassSpells();
+		this.inventory = this.playerClass.getInventory();
 		this.name = name;
 		this.level = 1;
-		
-		inventory = new Inventory(10);
 		
 		this.currentHealth = this.maxHealth = this.stamina * HEALTH_PER_STAMINA;
 		this.currentMana = this.maxMana = this.intellect * MANA_PER_INT;

@@ -12,8 +12,6 @@ public class Inventory {
 		}
 	}
 
-	public Useable get(String item){ return null; }
-
 	public int size() {	return spaces.length; }
 	public InventorySlot get(int i) { return spaces[i];	}
 	
@@ -48,6 +46,16 @@ public class Inventory {
 		return null;
 	}
 	
+	public Useable get(String item){
+		for(InventorySlot iv : spaces){
+			Useable ivItem = iv.getItem();
+			if(ivItem.nameEquals(item) && ivItem != null){
+				return (Useable) ivItem;
+			}
+		}
+		return null;
+	}
+	
 	@Override public String toString(){
 		int j = 0;
 		StringBuilder sb = new StringBuilder();
@@ -66,6 +74,7 @@ public class Inventory {
 	
 	public static void main(String[] args){
 		Inventory iv = new Inventory(10);
+		iv.add(new Potion("Test", false, 10));
 		System.out.println(iv);
 	}
 

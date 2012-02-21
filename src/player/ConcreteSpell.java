@@ -1,5 +1,8 @@
 package player;
 
+/*
+ * A spell of some type which players and nemies use while in combat
+ */
 public class ConcreteSpell implements Spell {
 	private int manaCost;
 	private int spellDmg;
